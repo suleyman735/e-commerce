@@ -4,10 +4,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import reducer,{ initialState} from './components/reducer';
+import { SatateProvider } from "./components/StateProvider";
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <SatateProvider initialState={initialState} reducer={reducer}>
     <App />
+    </SatateProvider>
+    
   </React.StrictMode>
 );
 
