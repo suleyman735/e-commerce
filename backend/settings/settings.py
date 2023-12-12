@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'myapp',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +69,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = 'settings.wsgi.application'
 
 
@@ -77,20 +81,13 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'e-shop',
+        'NAME': 'e-shops',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '',
         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': 'olive_growers',
-        # 'USER': 'root',
-        # 'PASSWORD':'',
-        # 'HOST':'localhost',
-        # 'PORT':'',
+
 
     }
 }
@@ -98,6 +95,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+
+# AUTH_USER_MODEL = 'myapp.CustomUser'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
