@@ -1,25 +1,32 @@
 from django.shortcuts import render
 
-# Create your views here.
-# myapp/views.py
+
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model, authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+
+from .models import CustomUser
 
 from .serializers import UserSerializer, LoginSerializer
 
-User = get_user_model()
+
 
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
 
     def perform_create(self, serializer):
         user = serializer.save()
-        Token.objects.create(user=user)
-
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        
+        return user
+        # Token.objects.create(user=user)
+        
 class LoginView(generics.CreateAPIView):
     serializer_class = LoginSerializer
     permission_classes = (permissions.AllowAny,)
@@ -27,12 +34,22 @@ class LoginView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = authenticate(
-            username=serializer.validated_data['username'],
-            password=serializer.validated_data['password']
-        )
-        if not user:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = serializer.validated_data['user']
 
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        return Response({
+            'user': UserSerializer(user).data,
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, status=status.HTTP_200_OK)
+        
+        
+class ListAllUsersView(generics.ListAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
+    
+    
